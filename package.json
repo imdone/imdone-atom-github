@@ -1,0 +1,23 @@
+{
+  "name": "imdone-atom-github",
+  "main": "./lib/imdone-atom-github",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "keywords": [],
+  "repository": "https://github.com/imdone/imdone-atom-github",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+    "atom-space-pen-views": "^2.0.5",
+    "github": "^0.2.4"
+  },
+  "consumedServices": {
+    "imdone": {
+      "versions": {
+        "^1.0.0": "consumeImdone"
+      }
+    }
+  }
+}
