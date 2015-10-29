@@ -2,18 +2,13 @@ ImdoneAtomGithubView = require './imdone-atom-github-view'
 {$, $$, $$$} = require 'atom-space-pen-views'
 {CompositeDisposable, Emitter} = require 'atom'
 GitHubApi = require 'github'
+GithubService = require './github-service'
 async = require 'async'
 issuePattern = /^.*?github\.com.*?issues.*$/
 githubPattern = /^https:\/\/github\.com\/.*$/
-# TODO:0 Put github in a github helper
-github = new GitHubApi
-    version: "3.0.0"
-    headers:
-      "user-agent": "imdone-atom"
 
 class Plugin extends Emitter
   @pluginName: "imdone-atom-github"
-  defaultIssueMetaKey: atom.config.get('imdone-atom-github.issueMetaKey')
   ready: false
   model:
     user: null
@@ -23,6 +18,7 @@ class Plugin extends Emitter
     metaKey: null
     getIssueIds: (task) ->
       task = @task unless task
+      return null unless task
       metaData = task.getMetaData()
       metaData[@metaKey] if (@metaKey && metaData)
 
@@ -30,11 +26,12 @@ class Plugin extends Emitter
     super()
     @model.repo = repo
     @getIssueMetaKey()
+    @githubService = new GithubService @model
     async.parallel [
       (cb) =>
-        @getGithubRepo(cb)
+        @githubService.getGithubRepo(cb)
       (cb) =>
-        @validateToken(cb)
+        @githubService.validateToken(cb)
     ], (err, result) =>
       @view = new ImdoneAtomGithubView @model
       if !err && @model.githubRepoUrl
@@ -44,28 +41,10 @@ class Plugin extends Emitter
   getIssueMetaKey: ->
     metaConfig  = @model.repo.getConfig().meta
     metaKeys = (key for key, val of metaConfig when issuePattern.test(val.urlTemplate)) if metaConfig
-    @model.metaKey = if metaKeys && metaKeys.length>0 then metaKeys[0] else @defaultIssueMetaKey
+    @model.metaKey = if (metaKeys && metaKeys.length>0) then metaKeys[0] else
+      atom.config.get('imdone-atom-github.defaultIssueMetaKey')
 
-  validateToken: (cb) ->
-    @token = atom.config.get 'imdone-atom-github.accessToken'
-    return false if @token == 'none'
-    github.authenticate
-      type: "oauth",
-      token: @token
-    github.user.get {}, (err, data) =>
-      @lastError = err if err
-      @model.user = data unless err
-      cb err, data
-
-  getGithubRepo: (cb) ->
-    dirs = (dir for dir in atom.project.getDirectories() when dir.path == @model.repo.path)
-    dir = dirs[0] if (dirs && dirs.length > 0)
-    atom.project.repositoryForDirectory(dir).then (gitRepo) =>
-      originURL = gitRepo.getOriginURL()
-      @model.githubRepoUrl = originURL if gitRepo && githubPattern.test originURL
-      cb(null, @model.githubRepoUrl)
-
-  # Interface
+  # Interface ---------------------------------------------------------------------------------------------------------
   isReady: ->
     @ready
   getView: ->
@@ -84,6 +63,7 @@ class Plugin extends Emitter
       if user
         @model.task = task
         @emit 'view.show'
+        @view.show()
         console.log "#{user}"
         console.log "#{task.id} clicked"
         console.log "#{issueIds} clicked"
