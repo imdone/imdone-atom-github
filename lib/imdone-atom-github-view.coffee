@@ -9,7 +9,8 @@ class ImdoneAtomGithubView extends View
         @div class:'btn-group btn-group-find', =>
           @button click: 'doFind', class:'btn btn-primary inline-block-tight', 'Find Issues'
 
-  initialize: (@model) ->
+  constructor: (@model) ->
+    super
     @handleEvents()
 
   handleEvents: ->
@@ -24,6 +25,5 @@ class ImdoneAtomGithubView extends View
 
   doFind: (e) ->
     searchText = @findIssuesField.getModel().getText()
-    @model.githubService.github.search.issues
-      q: searchText, (e, data) =>
-        console.log data
+    @model.githubService.findIssues searchText, (e, data) =>
+      console.log data

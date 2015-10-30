@@ -23,6 +23,10 @@
     {
       "name": "TODO",
       "hidden": false
+    },
+    {
+      "name": "DOING",
+      "hidden": false
     }
   ],
   "marked": {
