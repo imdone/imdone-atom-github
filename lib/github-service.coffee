@@ -4,17 +4,18 @@ githubPattern = /^https:\/\/github\.com\/.*$/
 
 module.exports =
 class GithubService
-  # DOING:0 Put github in a github helper
+  # #DONE:0 Put github in a github helper
   github: new GitHubApi
       version: "3.0.0"
       headers:
         "user-agent": "imdone-atom"
   constructor: (@model) ->
-    @model.githubService = this
+    @model.service = this
 
   getGithubRepo: (cb) ->
     dirs = (dir for dir in atom.project.getDirectories() when dir.path == @model.repo.path)
     dir = dirs[0] if (dirs && dirs.length > 0)
+    # #DOING:10 Save the upstream so we can access issues
     atom.project.repositoryForDirectory(dir).then (gitRepo) =>
       originURL = gitRepo.getOriginURL()
       @model.githubRepoUrl = originURL if gitRepo && githubPattern.test originURL
@@ -31,10 +32,17 @@ class GithubService
       type: "oauth",
       token: @token
     @github.user.get {}, (err, data) =>
-      @model.lastError = err if err
+      return cb err if err
       @model.user = data unless err
       cb err, data
 
   findIssues: (q, cb) ->
     q += " repo:#{@model.githubRepoUser}/#{@model.githubRepo}"
     @github.search.issues {q:q}, cb
+
+  getIssue: (number, cb) ->
+    req =
+      user: @model.githubRepoUser
+      repo: @model.githubRepo
+      number: number,
+    @github.issues.getRepoIssue req, cb

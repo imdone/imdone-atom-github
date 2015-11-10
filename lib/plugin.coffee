@@ -9,7 +9,7 @@ module.exports =
 class Plugin extends Emitter
   @pluginName: "imdone-atom-github"
   ready: false
-  constructor: (repo) ->
+  constructor: (repo, @imdoneView) ->
     super()
     @model =
       user: null
@@ -41,6 +41,7 @@ class Plugin extends Emitter
     metaKeys = (key for key, val of metaConfig when issuePattern.test(val.urlTemplate)) if metaConfig
     @model.metaKey = if (metaKeys && metaKeys.length>0) then metaKeys[0] else
       atom.config.get('imdone-atom-github.defaultIssueMetaKey')
+      # #DOING:0 Add issueMeta to imdone config and save
 
   # Interface ---------------------------------------------------------------------------------------------------------
   isReady: ->
@@ -57,11 +58,10 @@ class Plugin extends Emitter
       @a href: '#', title: title, =>
         @span class:"icon icon-octoface"
     $btn.on 'click', (e) =>
+      $(e.target).find('.task')
       user = getUser()
       if user
         @model.task = task
-        @emit 'view.show'
-        @view.show()
-        console.log "#{user}"
-        console.log "#{task.id} clicked"
-        console.log "#{issueIds} clicked"
+        @imdoneView.showPlugin @
+        @imdoneView.selectTask id
+        @view.show issueIds

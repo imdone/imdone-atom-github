@@ -2,9 +2,9 @@ Plugin = require './plugin'
 module.exports = ImdoneAtomGithub =
   config:
     defaultIssueMetaKey:
-      description: 'The meta key for github issues'
+      description: 'The default meta key for github issues'
       type: 'string'
-      default: 'ghiss'
+      default: 'issue'
     accessToken:
       description: 'Github personal access token. [Get one](https://github.com/settings/tokens/new?description=imdone-atom)'
       type: 'string'

@@ -10,4 +10,37 @@
     float: left;
     margin-right: 5px;
   }
+  .issue-view-switch {
+    position: absolute;
+    top: 5px;
+    right: 30px;
+  }
+  .issue-list {
+    position: absolute;
+    top: 50px;
+    bottom: 0;
+    overflow: auto;
+    width: 50%;
+    ol {
+      list-style: none;
+      padding-left: 0;
+      .well {
+        background-color: @pane-item-background-color;
+      }
+      .issue {
+        .issue-title {
+          font-size: 1.5em;
+        }
+        .issue-state {
+          .badge {
+            border-radius: 3px;
+          }
+        }
+      }
+
+    }
+    .spinner {
+      text-align: center;
+    }
+  }
 }
