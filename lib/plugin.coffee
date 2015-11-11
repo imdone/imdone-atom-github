@@ -35,8 +35,9 @@ class Plugin extends Emitter
       if !err && @model.githubRepoUrl
         @ready = true
         @emit 'ready'
-    
+
     @imdoneView.emitter().on 'board.update', =>
+      return unless @view.is ':visible'
       @imdoneView.selectTask @model.task.id
 
   getIssueMetaKey: ->
