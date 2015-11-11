@@ -2,22 +2,18 @@
 async = require 'async'
 module.exports =
 class ImdoneAtomGithubView extends View
+  @defaultSearch: "is:open is:issue"
   @content: ->
     @div id:"imdone-atom-github-view", =>
       @div outlet:'findIssues', class: 'block find-issues', =>
         @div class: 'input-med', =>
-          @subview 'findIssuesField', new TextEditorView(mini: true, placeholder: "is:open is:issue")
+          @subview 'findIssuesField', new TextEditorView(mini: true, placeholderText: @defaultSearch)
         @div class:'btn-group btn-group-find', =>
           @button click: 'doFind', class:'btn btn-primary inline-block-tight', =>
             @span class:'icon icon-mark-github', 'Find Issues'
-      @div outlet:'viewSwitch', class: 'block issue-view-switch', =>
-        @div class: 'btn-group', =>
-          @button outlet: 'searchSwitch', click: 'showSearch', class: 'btn', "search"
-          @button outlet: 'relatedSwitch', click: 'showRelatedIssues', class: 'btn', "related"
       @div class:'issues-container', =>
-        @div outlet: 'searchResult', class: 'issue-list'
-        @div outlet: 'relatedIssues', class: 'issue-list'
-        @div outlet: 'issueDetail', class: 'issue-detail'
+        @div outlet: 'searchResult', class: 'issue-list search-result'
+        @div outlet: 'relatedIssues', class: 'issue-list related-issues'
 
   constructor: (@model) ->
     super
@@ -30,30 +26,13 @@ class ImdoneAtomGithubView extends View
     Object.observe @model, (changes) =>
       console.log changes
 
-  hideAll: ->
-    @viewSwitch.find('button').removeClass 'selected'
-    @findIssues.hide()
-    @searchResult.hide()
-    @relatedIssues.hide()
-
   show: (@issues) ->
-    if @issues
-      @showRelatedIssues()
-    else
-      @relatedIssues.empty()
-      @showSearch()
-
-  showSearch: ->
-    @hideAll()
-    @searchSwitch.addClass 'selected'
-    @findIssues.show()
-    @searchResult.show()
     @findIssuesField.focus()
+    @showRelatedIssues()
+    @doFind() if (@searchResult.is(':empty'))
 
   showRelatedIssues: () ->
-    @hideAll()
-    @relatedSwitch.addClass 'selected'
-    @relatedIssues.show()
+    @relatedIssues.empty()
     return unless @issues
     @relatedIssues.html @$spinner()
     async.map(@issues, (number, cb) =>
@@ -68,9 +47,14 @@ class ImdoneAtomGithubView extends View
           @relatedIssues.html @$issueList(results)
     )
 
+  getSearchQry: ->
+    qry = @findIssuesField.getModel().getText()
+    return ImdoneAtomGithubView.defaultSearch unless qry
+    qry
+
   doFind: (e) ->
     @searchResult.html @$spinner()
-    searchText = @findIssuesField.getModel().getText()
+    searchText = @getSearchQry()
     @model.service.findIssues searchText, (e, data) =>
       @searchResult.html @$issueList(data.items)
       console.log data
@@ -87,8 +71,8 @@ class ImdoneAtomGithubView extends View
           @li class:'issue well', "data-issue-id":issue.id, =>
             @div class:'issue-title', =>
               @p =>
-                @span issue.title
-                @span class:'issue-number', " ##{issue.number}"
+                @span "#{issue.title} "
+                @a href:issue.html_url, class:'issue-number', "##{issue.number}"
             @div class:'issue-state', =>
               @p =>
                 if issue.state == "open"
