@@ -3,6 +3,14 @@
 // See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
 // for a full listing of what's available.
 @import "ui-variables";
+@import "octicon-mixins";
+@import "octicon-utf-codes.less";
+
+.make-mega(@name) {
+  .icon-@{name}.mega-icon { .mega-octicon(@name); }
+}
+.make-mega(diff-added);
+.make-mega(diff-removed);
 
 .imdone-atom-github {
   .input-med {

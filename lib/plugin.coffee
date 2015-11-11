@@ -35,6 +35,9 @@ class Plugin extends Emitter
       if !err && @model.githubRepoUrl
         @ready = true
         @emit 'ready'
+    
+    @imdoneView.emitter().on 'board.update', =>
+      @imdoneView.selectTask @model.task.id
 
   getIssueMetaKey: ->
     metaConfig  = @model.repo.getConfig().meta
@@ -53,7 +56,7 @@ class Plugin extends Emitter
     task = @model.repo.getTask(id)
     issueIds = @model.getIssueIds(task)
     getUser = => return @model.user
-    title = if issueIds then "Change or add another github issue to this task" else "Show this to your team in a github issue"
+    title = "Update linked github issues"
     $btn = $$ ->
       @a href: '#', title: title, =>
         @span class:"icon icon-octoface"

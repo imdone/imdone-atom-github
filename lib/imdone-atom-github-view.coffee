@@ -20,11 +20,30 @@ class ImdoneAtomGithubView extends View
     @handleEvents()
 
   handleEvents: ->
+    model = @model
+    self = @
     @findIssuesField.on 'keyup', (e) =>
       code = e.keyCode || e.which
       @doFind() if(code == 13)
+
     Object.observe @model, (changes) =>
       console.log changes
+
+    @on 'click', '.issue-add', (e) ->
+      id = $(@).attr('data-issue-number')
+      $(@).closest('li').remove();
+      model.task.addMetaData model.metaKey, id
+      model.repo.modifyTask model.task, true
+      self.issues = model.getIssueIds()
+      self.showRelatedIssues()
+
+    @on 'click', '.issue-remove', (e) ->
+      id = $(@).attr('data-issue-number')
+      $(@).closest('li').remove();
+      model.task.removeMetaData model.metaKey, id
+      model.repo.modifyTask model.task, true
+      self.issues = model.getIssueIds()
+      self.doFind()
 
   show: (@issues) ->
     @findIssuesField.focus()
@@ -56,26 +75,33 @@ class ImdoneAtomGithubView extends View
     @searchResult.html @$spinner()
     searchText = @getSearchQry()
     @model.service.findIssues searchText, (e, data) =>
-      @searchResult.html @$issueList(data.items)
-      console.log data
+      @searchResult.html @$issueList(data.items, true)
 
   $spinner: ->
     $$ ->
       @div class: 'spinner', =>
         @span class:'loading loading-spinner-large inline-block'
 
-  $issueList: (issues) ->
+  $issueList: (issues, search) ->
+    numbers = @issues
     $$ ->
       @ol =>
         for issue in issues
-          @li class:'issue well', "data-issue-id":issue.id, =>
-            @div class:'issue-title', =>
-              @p =>
-                @span "#{issue.title} "
-                @a href:issue.html_url, class:'issue-number', "##{issue.number}"
-            @div class:'issue-state', =>
-              @p =>
-                if issue.state == "open"
-                  @span class:'badge badge-success icon icon-issue-opened', 'Open'
-                else
-                  @span class:'badge badge-error icon icon-issue-closed', 'Closed'
+          unless search && numbers && numbers.indexOf(issue.number.toString()) > -1
+            @li class:'issue well', "data-issue-id":issue.id, =>
+              @div class:'issue-title', =>
+                @p =>
+                  @span "#{issue.title} "
+                  @a href:issue.html_url, class:'issue-number', "##{issue.number}"
+              @div class:'issue-state', =>
+                @p =>
+                  if issue.state == "open"
+                    @span class:'badge badge-success icon icon-issue-opened', 'Open'
+                  else
+                    @span class:'badge badge-error icon icon-issue-closed', 'Closed'
+                  if search
+                    @a href:'#', class:'issue-add', "data-issue-number":issue.number, =>
+                      @span class:'icon icon-diff-added mega-icon pull-right'
+                  else
+                    @a href:'#', class:'issue-remove', "data-issue-number":issue.number, =>
+                      @span class:'icon icon-diff-removed mega-icon pull-right'
