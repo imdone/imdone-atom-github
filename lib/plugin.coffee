@@ -45,7 +45,7 @@ class Plugin extends Emitter
     metaKeys = (key for key, val of metaConfig when issuePattern.test(val.urlTemplate)) if metaConfig
     @model.metaKey = if (metaKeys && metaKeys.length>0) then metaKeys[0] else
       atom.config.get('imdone-atom-github.defaultIssueMetaKey')
-      # #DOING:0 Add issueMeta to imdone config and save
+      # #DOING:0 Add issueMeta to imdone config and save issue:2
 
   # Interface ---------------------------------------------------------------------------------------------------------
   isReady: ->

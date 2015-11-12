@@ -11,6 +11,7 @@ class ImdoneAtomGithubView extends View
         @div class:'btn-group btn-group-find', =>
           @button click: 'doFind', class:'btn btn-primary inline-block-tight', =>
             @span class:'icon icon-mark-github', 'Find Issues'
+          @button click: 'newIssue', class:'btn btn-success inline-block-tight', 'New Issue'
       @div class:'issues-container', =>
         @div outlet: 'searchResult', class: 'issue-list search-result'
         @div outlet: 'relatedIssues', class: 'issue-list related-issues'
@@ -48,7 +49,7 @@ class ImdoneAtomGithubView extends View
   show: (@issues) ->
     @findIssuesField.focus()
     @showRelatedIssues()
-    @doFind() if (@searchResult.is(':empty'))
+    @doFind()
 
   showRelatedIssues: () ->
     @relatedIssues.empty()
@@ -59,7 +60,7 @@ class ImdoneAtomGithubView extends View
         cb(err, issue)
       )
     , (err, results) =>
-        # #TODO:0 Check error for 404/Not Found
+        # #TODO:10 Check error for 404/Not Found
         if err
           console.log "error:", err
         else
@@ -76,6 +77,13 @@ class ImdoneAtomGithubView extends View
     searchText = @getSearchQry()
     @model.service.findIssues searchText, (e, data) =>
       @searchResult.html @$issueList(data.items, true)
+
+  newIssue: ->
+    @model.service.newIssue @model.task.text, (e, data) =>
+      @model.task.addMetaData @model.metaKey, data.number
+      @model.repo.modifyTask @model.task, true
+      @issues = @model.getIssueIds()
+      @showRelatedIssues()
 
   $spinner: ->
     $$ ->

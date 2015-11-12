@@ -15,7 +15,7 @@ class GithubService
   getGithubRepo: (cb) ->
     dirs = (dir for dir in atom.project.getDirectories() when dir.path == @model.repo.path)
     dir = dirs[0] if (dirs && dirs.length > 0)
-    # #DOING:10 Save the upstream so we can access issues
+    # #TODO:0 Save the upstream so we can access issues issue:1
     atom.project.repositoryForDirectory(dir).then (gitRepo) =>
       originURL = gitRepo.getOriginURL()
       @model.githubRepoUrl = originURL if gitRepo && githubPattern.test originURL
@@ -44,5 +44,12 @@ class GithubService
     req =
       user: @model.githubRepoUser
       repo: @model.githubRepo
-      number: number,
+      number: number
     @github.issues.getRepoIssue req, cb
+
+  newIssue: (title, cb) ->
+    req =
+      user: @model.githubRepoUser
+      repo: @model.githubRepo
+      title: title
+    @github.issues.create req, cb
