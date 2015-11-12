@@ -4,7 +4,7 @@ githubPattern = /^https:\/\/github\.com\/.*$/
 
 module.exports =
 class GithubService
-  # #DONE:0 Put github in a github helper
+  # #DONE:0 Put github in a github helper issue:3
   github: new GitHubApi
       version: "3.0.0"
       headers:

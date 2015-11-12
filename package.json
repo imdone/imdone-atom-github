@@ -2,8 +2,15 @@
   "name": "imdone-atom-github",
   "main": "./lib/imdone-atom-github",
   "version": "0.0.0",
-  "description": "A short description of your package",
-  "keywords": [],
+  "description": "Link github issues to imdone tasks",
+  "keywords": [
+    "scrum",
+    "tasks",
+    "agile",
+    "productivity",
+    "issues",
+    "github"
+  ],
   "repository": "https://github.com/imdone/imdone-atom-github",
   "license": "MIT",
   "engines": {
