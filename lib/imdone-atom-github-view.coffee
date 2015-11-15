@@ -34,17 +34,19 @@ class ImdoneAtomGithubView extends View
       id = $(@).attr('data-issue-number')
       $(@).closest('li').remove();
       model.task.addMetaData model.metaKey, id
-      model.repo.modifyTask model.task, true
-      self.issues = model.getIssueIds()
-      self.showRelatedIssues()
+      model.repo.modifyTask model.task, true, (err, result) ->
+        console.log err, result
+        self.issues = model.getIssueIds()
+        self.showRelatedIssues()
 
     @on 'click', '.issue-remove', (e) ->
       id = $(@).attr('data-issue-number')
       $(@).closest('li').remove();
       model.task.removeMetaData model.metaKey, id
-      model.repo.modifyTask model.task, true
-      self.issues = model.getIssueIds()
-      self.doFind()
+      model.repo.modifyTask model.task, true, (err, result) ->
+        console.log err, result
+        self.issues = model.getIssueIds()
+        self.doFind()
 
   show: (@issues) ->
     @findIssuesField.focus()
@@ -76,7 +78,10 @@ class ImdoneAtomGithubView extends View
     @searchResult.html @$spinner()
     searchText = @getSearchQry()
     @model.service.findIssues searchText, (e, data) =>
-      @searchResult.html @$issueList(data.items, true)
+      if data
+        @searchResult.html @$issueList(data.items, true)
+      else
+        @searchResult.html 'No issues found'
 
   newIssue: ->
     @model.service.newIssue @model.task.text, (e, data) =>
