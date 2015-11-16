@@ -1,7 +1,7 @@
 imdone-atom-github package
 ====
 
-Link github issues to imdone tasks.
+Create GitHub issues from TODO comments in your code, or search for issues and link them to your TODOs.
 
 ![gifrecord_2015-11-12_164006](https://cloud.githubusercontent.com/assets/233505/11133613/5f91df08-895c-11e5-9caa-caa6bde93300.gif)
 

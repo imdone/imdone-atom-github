@@ -2,7 +2,7 @@
   "name": "imdone-atom-github",
   "main": "./lib/imdone-atom-github",
   "version": "0.1.2",
-  "description": "Link github issues to imdone tasks",
+  "description": "Link GitHub issues to FIXME and TODO comments in your code.",
   "keywords": [
     "scrum",
     "tasks",
