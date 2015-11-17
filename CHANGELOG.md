@@ -1,3 +1,7 @@
+## 0.1.4
+* Make sure view is not null before calling `is ':vislible'`
+* use package name for `@pluginName`
+
 ## 0.1.3
 * Readme update
 
