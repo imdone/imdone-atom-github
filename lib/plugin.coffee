@@ -7,7 +7,7 @@ issuePattern = /^.*?github\.com.*?issues.*$/
 
 module.exports =
 class Plugin extends Emitter
-  @pluginName: "imdone-atom-github"
+  @pluginName: require('../package.json').name
   ready: false
   constructor: (repo, @imdoneView) ->
     super()
@@ -37,7 +37,7 @@ class Plugin extends Emitter
         @emit 'ready'
 
     @imdoneView.emitter().on 'board.update', =>
-      return unless @view.is ':visible'
+      return unless @view && @view.is ':visible'
       @imdoneView.selectTask @model.task.id
 
   getIssueMetaKey: ->

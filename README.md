@@ -7,8 +7,8 @@ Create GitHub issues from TODO comments in your code, or search for issues and l
 
 Installation
 ----
-1. Requires [imdone-atom](https://atom.io/packages/imdone-atom) package.
-2. `apm install imdone-atom-github`
+Requires [imdone-atom](https://atom.io/packages/imdone-atom) package.  
+`apm install imdone-atom imdone-atom-github`
 
 Usage
 ----
