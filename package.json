@@ -1,7 +1,7 @@
 {
   "name": "imdone-atom-github",
   "main": "./lib/imdone-atom-github",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Link GitHub issues to FIXME and TODO comments in your code.",
   "keywords": [
     "scrum",
