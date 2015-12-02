@@ -1,3 +1,6 @@
+## 0.1.7
+* Fix ssh in githubPattern
+
 ## 0.1.6
 * Add ssh for github pattern
 

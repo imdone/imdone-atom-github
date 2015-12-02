@@ -1,6 +1,6 @@
 GitHubApi = require 'github'
 url = require 'url'
-githubPattern = /^(https|ssh):\/\/github\.com\/.*$/
+githubPattern = /^((?:https:\/\/)|ssh:\/\/.*?@)github\.com\/.*$/
 
 module.exports =
 class GithubService
