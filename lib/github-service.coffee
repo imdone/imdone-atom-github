@@ -1,6 +1,6 @@
 GitHubApi = require 'github'
 url = require 'url'
-githubPattern = /^https:\/\/github\.com\/.*$/
+githubPattern = /^(https|ssh):\/\/github\.com\/.*$/
 
 module.exports =
 class GithubService
@@ -17,6 +17,7 @@ class GithubService
     dir = dirs[0] if (dirs && dirs.length > 0)
     # #TODO:0 Save the upstream so we can access issues issue:1
     atom.project.repositoryForDirectory(dir).then (gitRepo) =>
+      return cb(null, null) unless gitRepo
       originURL = gitRepo.getOriginURL()
       @model.githubRepoUrl = originURL if gitRepo && githubPattern.test originURL
       if @model.githubRepoUrl

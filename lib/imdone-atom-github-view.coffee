@@ -84,6 +84,7 @@ class ImdoneAtomGithubView extends View
         @searchResult.html 'No issues found'
 
   newIssue: ->
+    # TODO Also add the task list as a label
     @model.service.newIssue @model.task.text, (e, data) =>
       @model.task.addMetaData @model.metaKey, data.number
       @model.repo.modifyTask @model.task, true
