@@ -19,6 +19,11 @@ class GithubService
     atom.project.repositoryForDirectory(dir).then (gitRepo) =>
       return cb(null, null) unless gitRepo
       originURL = gitRepo.getOriginURL()
+      console.log "*** Found git repo with origin:%s ***", originURL
+      upstream = gitRepo.getUpstreamBranch()
+      if upstream
+        target = gitRepo.getReferenceTarget(upstream)
+        console.log "*** Found upstream branch: %s with target: %s ***", upstream, target
       @model.githubRepoUrl = originURL if gitRepo && githubPattern.test originURL
       if @model.githubRepoUrl
         parts = url.parse(@model.githubRepoUrl).path.split '/'
