@@ -1,3 +1,6 @@
+## 0.1.9
+* Allow scp style urls for ssh with git-up
+
 ## 0.1.7
 * Fix ssh in githubPattern
 

@@ -1,6 +1,5 @@
 GitHubApi = require 'github'
-url = require 'url'
-githubPattern = /^((?:https:\/\/)|ssh:\/\/.*?@)github\.com\/.*$/
+gitup = require 'git-up'
 
 module.exports =
 class GithubService
@@ -24,9 +23,10 @@ class GithubService
       if upstream
         target = gitRepo.getReferenceTarget(upstream)
         console.log "*** Found upstream branch: %s with target: %s ***", upstream, target
-      @model.githubRepoUrl = originURL if gitRepo && githubPattern.test originURL
+      parsedURL = gitup originURL
+      @model.githubRepoUrl = originURL if parsedURL.resource == 'github.com'
       if @model.githubRepoUrl
-        parts = url.parse(@model.githubRepoUrl).path.split '/'
+        parts = parsedURL.pathname.split '/'
         @model.githubRepoUser = parts[1]
         @model.githubRepo = parts[2].split('.')[0]
       cb(null, @model.githubRepoUrl)
