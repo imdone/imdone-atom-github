@@ -23,6 +23,16 @@ class Plugin extends Emitter
         metaData = task.getMetaData()
         metaData[@metaKey] if (@metaKey && metaData)
 
+    # GitHub Enterprise Support https://enterprise.github.com/help/articles/using-the-api
+    if atom.config.get("imdone-atom-github.gitHubEnterpriseHost")
+        @model.hostname = atom.config.get("imdone-atom-github.gitHubEnterpriseHost")
+        @model.resourceName = @model.hostname
+        @model.path = '/api/v3'
+    else
+        @model.hostname = 'api.github.com'
+        @model.resourceName = 'github.com'
+        @model.path = '/'
+
     @getIssueMetaKey()
     @githubService = new GithubService @model
     async.parallel [
