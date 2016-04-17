@@ -1,3 +1,9 @@
+## 0.1.11
+* Update readme and changelog
+
+## 0.1.10
+* Added support for github enterprise
+
 ## 0.1.9
 * Allow scp style urls for ssh with git-up
 

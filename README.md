@@ -14,3 +14,7 @@ Usage
 ----
 - Open imdone in a project
 - Click the octocat icon on a task to bring up issue search and association
+
+For GitHub Enterprise
+----
+- If you want to use imdone-atom-github with GitHub Enterprise, enter the hostname in the plugin settings.
