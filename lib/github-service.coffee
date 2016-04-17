@@ -3,13 +3,15 @@ gitup = require 'git-up'
 
 module.exports =
 class GithubService
-  # #DONE:0 Put github in a github helper issue:3
-  github: new GitHubApi
-      version: "3.0.0"
-      headers:
-        "user-agent": "imdone-atom"
   constructor: (@model) ->
     @model.service = this
+    # #DONE:0 Put github in a github helper issue:3
+    @github = new GitHubApi
+        version: "3.0.0"
+        host: @model.hostname
+        pathPrefix: @model.path
+        headers:
+          "user-agent": "imdone-atom"
 
   getGithubRepo: (cb) ->
     dirs = (dir for dir in atom.project.getDirectories() when dir.path == @model.repo.path)
@@ -24,7 +26,7 @@ class GithubService
         target = gitRepo.getReferenceTarget(upstream)
         console.log "*** Found upstream branch: %s with target: %s ***", upstream, target
       parsedURL = gitup originURL
-      @model.githubRepoUrl = originURL if parsedURL.resource == 'github.com'
+      @model.githubRepoUrl = originURL if parsedURL.resource == @model.resourceName
       if @model.githubRepoUrl
         parts = parsedURL.pathname.split '/'
         @model.githubRepoUser = parts[1]
