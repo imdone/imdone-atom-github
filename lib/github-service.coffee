@@ -14,7 +14,7 @@ class GithubService
   getGithubRepo: (cb) ->
     dirs = (dir for dir in atom.project.getDirectories() when dir.path == @model.repo.path)
     dir = dirs[0] if (dirs && dirs.length > 0)
-    # #TODO:0 Save the upstream so we can access issues issue:1
+    # #TODO:0 Save the upstream so we can access issues.  Need to use the github api. issue:1
     atom.project.repositoryForDirectory(dir).then (gitRepo) =>
       return cb(null, null) unless gitRepo
       originURL = gitRepo.getOriginURL()

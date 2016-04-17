@@ -1,16 +1,13 @@
-ImdoneAtomGithubView = require './imdone-atom-github-view'
-{$, $$, $$$} = require 'atom-space-pen-views'
 {Emitter} = require 'atom'
-GithubService = require './github-service'
-async = require 'async'
-issuePattern = /^.*?github\.com.*?issues.*$/
-
 module.exports =
 class Plugin extends Emitter
   @pluginName: require('../package.json').name
   ready: false
   constructor: (repo, @imdoneView) ->
     super()
+    ImdoneAtomGithubView = require './imdone-atom-github-view'
+    GithubService = require './github-service'
+    async = require 'async'
     @model =
       user: null
       task: null
@@ -41,6 +38,7 @@ class Plugin extends Emitter
       @imdoneView.selectTask @model.task.id
 
   getIssueMetaKey: ->
+    issuePattern = /^.*?github\.com.*?issues.*$/
     metaConfig  = @model.repo.getConfig().meta
     metaKeys = (key for key, val of metaConfig when issuePattern.test(val.urlTemplate)) if metaConfig
     @model.metaKey = if (metaKeys && metaKeys.length>0) then metaKeys[0] else
@@ -53,6 +51,7 @@ class Plugin extends Emitter
   getView: ->
     @view
   taskButton: (id) ->
+    {$, $$, $$$} = require 'atom-space-pen-views'
     return unless @model.repo && @model.githubRepoUrl
     task = @model.repo.getTask(id)
     issueIds = @model.getIssueIds(task)
