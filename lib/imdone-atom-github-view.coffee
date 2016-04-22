@@ -62,7 +62,7 @@ class ImdoneAtomGithubView extends View
         cb(err, issue)
       )
     , (err, results) =>
-        # #TODO:10 Check error for 404/Not Found
+        # #TODO:20 Check error for 404/Not Found
         if err
           console.log "error:", err
         else
@@ -84,7 +84,7 @@ class ImdoneAtomGithubView extends View
         @searchResult.html 'No issues found'
 
   newIssue: ->
-    # TODO Also add the task list as a label
+    # TODO:0 Also add the task list as a label
     @model.service.newIssue @model.task.text, (e, data) =>
       @model.task.addMetaData @model.metaKey, data.number
       @model.repo.modifyTask @model.task, true

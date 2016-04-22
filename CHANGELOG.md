@@ -1,3 +1,7 @@
+## 0.1.12
+* Hostname for github is now determined by origin remote
+* Support for multiple tokens (will use the first one that works for the hostname)
+
 ## 0.1.11
 * Update readme and changelog
 
