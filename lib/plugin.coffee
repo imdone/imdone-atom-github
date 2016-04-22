@@ -1,4 +1,5 @@
 {Emitter} = require 'atom'
+
 module.exports =
 class Plugin extends Emitter
   @pluginName: require('../package.json').name
@@ -8,6 +9,7 @@ class Plugin extends Emitter
     ImdoneAtomGithubView = require './imdone-atom-github-view'
     GithubService = require './github-service'
     async = require 'async'
+    gitup = require 'git-up'
     @model =
       user: null
       task: null
@@ -21,27 +23,34 @@ class Plugin extends Emitter
         metaData[@metaKey] if (@metaKey && metaData)
 
     # GitHub Enterprise Support https://enterprise.github.com/help/articles/using-the-api
-    if atom.config.get("imdone-atom-github.gitHubEnterpriseHost")
-        @model.hostname = atom.config.get("imdone-atom-github.gitHubEnterpriseHost")
+    dirs = (dir for dir in atom.project.getDirectories() when dir.path == @model.repo.path)
+    dir = dirs[0] if (dirs && dirs.length > 0)
+    atom.project.repositoryForDirectory(dir).then (gitRepo) =>
+      originURL = gitRepo.getOriginURL()
+      parsedURL = gitup originURL
+      if parsedURL.resource != 'github.com'
+        @model.hostname = parsedURL.resource
         @model.resourceName = @model.hostname
         @model.path = '/api/v3'
-    else
+      else
         @model.hostname = 'api.github.com'
         @model.resourceName = 'github.com'
         @model.path = '/'
 
-    @getIssueMetaKey()
-    @githubService = new GithubService @model
-    async.parallel [
-      (cb) =>
-        @githubService.getGithubRepo(cb)
-      (cb) =>
-        @githubService.validateToken(cb)
-    ], (err, result) =>
-      @view = new ImdoneAtomGithubView @model
-      if !err && @model.githubRepoUrl
-        @ready = true
-        @emit 'ready'
+      @getIssueMetaKey()
+      # This has to be within the callback after getting hostname
+      # This sets the github packages config correctly
+      @githubService = new GithubService @model
+      async.parallel [
+        (cb) =>
+          @githubService.getGithubRepo(cb)
+        (cb) =>
+          @githubService.validateToken(cb)
+      ], (err, result) =>
+        @view = new ImdoneAtomGithubView @model
+        if !err && @model.githubRepoUrl
+          @ready = true
+          @emit 'ready'
 
     @imdoneView.on 'board.update', =>
       return unless @view && @view.is ':visible'
@@ -78,3 +87,5 @@ class Plugin extends Emitter
         @imdoneView.showPlugin @
         @imdoneView.selectTask id
         @view.show issueIds
+      else
+        console.log "Oops could not find appropriate user"

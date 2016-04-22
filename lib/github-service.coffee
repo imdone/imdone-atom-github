@@ -16,7 +16,7 @@ class GithubService
   getGithubRepo: (cb) ->
     dirs = (dir for dir in atom.project.getDirectories() when dir.path == @model.repo.path)
     dir = dirs[0] if (dirs && dirs.length > 0)
-    # #TODO:0 Save the upstream so we can access issues.  Need to use the github api. issue:1
+    # #TODO:20 Save the upstream so we can access issues.  Need to use the github api. issue:1
     atom.project.repositoryForDirectory(dir).then (gitRepo) =>
       return cb(null, null) unless gitRepo
       originURL = gitRepo.getOriginURL()
@@ -34,6 +34,7 @@ class GithubService
       cb(null, @model.githubRepoUrl)
 
   validateToken: (cb) ->
+    # TODO:10 Change Global token from string to array issue:15
     @token = atom.config.get 'imdone-atom-github.accessToken'
     return false if @token == 'none'
     @github.authenticate

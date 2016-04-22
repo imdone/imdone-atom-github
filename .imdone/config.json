@@ -40,5 +40,6 @@
     "pedantic": false,
     "smartLists": true,
     "langPrefix": "language-"
-  }
+  },
+  "keepEmptyPriority": false
 }
