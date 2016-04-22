@@ -5,11 +5,10 @@ module.exports = ImdoneAtomGithub =
       description: 'The default meta key for github issues'
       type: 'string'
       default: 'issue'
-      # TODO Change to array issue:15
     accessToken:
       description: 'Github personal access token. [Get one](https://github.com/settings/tokens/new?description=imdone-atom)'
-      type: 'string'
-      default: 'none'
+      type: 'array'
+      default: []
 
   deactivate: ->
     @imdone.removePlugin Plugin if (@imdone && @imdone.removePlugin)

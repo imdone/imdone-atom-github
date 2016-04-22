@@ -62,7 +62,7 @@ class ImdoneAtomGithubView extends View
         cb(err, issue)
       )
     , (err, results) =>
-        # #TODO:30 Check error for 404/Not Found
+        # #TODO:20 Check error for 404/Not Found
         if err
           console.log "error:", err
         else

@@ -1,5 +1,6 @@
 GitHubApi = require 'github'
 gitup = require 'git-up'
+async = require 'async'
 
 module.exports =
 class GithubService
@@ -16,7 +17,7 @@ class GithubService
   getGithubRepo: (cb) ->
     dirs = (dir for dir in atom.project.getDirectories() when dir.path == @model.repo.path)
     dir = dirs[0] if (dirs && dirs.length > 0)
-    # #TODO:20 Save the upstream so we can access issues.  Need to use the github api. issue:1
+    # #TODO:10 Save the upstream so we can access issues.  Need to use the github api. issue:1
     atom.project.repositoryForDirectory(dir).then (gitRepo) =>
       return cb(null, null) unless gitRepo
       originURL = gitRepo.getOriginURL()
@@ -34,16 +35,29 @@ class GithubService
       cb(null, @model.githubRepoUrl)
 
   validateToken: (cb) ->
-    # TODO:10 Change Global token from string to array issue:15
-    @token = atom.config.get 'imdone-atom-github.accessToken'
-    return false if @token == 'none'
-    @github.authenticate
-      type: "oauth",
-      token: @token
-    @github.user.get {}, (err, data) =>
-      return cb err if err
-      @model.user = data unless err
-      cb err, data
+    @tokens = atom.config.get 'imdone-atom-github.accessToken'
+    return false if @tokens.length == 0
+    current = 0
+    total = @tokens.length
+    found = false
+    async.whilst =>
+      return current < total && !found
+    , (callback) =>
+      token = @tokens[current]
+      @github.authenticate
+        type: "oauth",
+        token: token
+      @github.user.get {}, (err, data) =>
+        current++
+        if !err
+          found = true
+          callback(null, data)
+        else
+          callback(null, null)
+    , (err, res) =>
+      if res
+        @model.user = res
+        cb err, res
 
   findIssues: (q, cb) ->
     q += " repo:#{@model.githubRepoUser}/#{@model.githubRepo}"
